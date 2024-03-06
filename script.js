@@ -4,6 +4,8 @@ const cntEl = document.getElementById('counter')
 const ulEl = document.getElementById('listItems')
 
 let count = 0
+const utterance = new SpeechSynthesisUtterance();
+
 function incF() {
     
     count++
@@ -19,6 +21,8 @@ function incF() {
         li.setAttribute('class', 'yellow')
     }
     li.innerHTML = '<b> Sentence </b>' + count
+    utterance.text = "incremented to " + count;
+    speechSynthesis.speak(utterance);
     //append
     console.log(li)
     ulEl.appendChild(li)
