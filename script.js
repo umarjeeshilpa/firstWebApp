@@ -1,10 +1,17 @@
 const incB = document.querySelector('#inc')
 const decB = document.querySelector('#dec')
+const saveButton = document.querySelector('#save')
+const dictateButton = document.querySelector('#dictate')
 const cntEl = document.getElementById('counter')
 const ulEl = document.getElementById('listItems')
+const textEl = document.getElementById('text')
+
+
 
 let count = 0
-const utterance = new SpeechSynthesisUtterance();
+
+let words = []
+const utterance = new SpeechSynthesisUtterance()
 
 function incF() {
     
@@ -21,7 +28,7 @@ function incF() {
         li.setAttribute('class', 'yellow')
     }
     li.innerHTML = '<b> Sentence </b>' + count
-    utterance.text = "incremented to " + count;
+	utterance.text = "incremented to " + count
     speechSynthesis.speak(utterance);
     //append
     console.log(li)
@@ -38,5 +45,34 @@ function decF() {
     cntEl.innerText = count
 }
 
+function saveText() {
+	
+	let textInput = textEl.value
+	words = textInput.split( "\n" )
+	textEl.value = ""
+	console.log(words)
+}
+function dictateNext() {
+	if (words.length == count) {
+		console.log("disable start dictation")
+		return;
+	}
+	let word = words[count]
+	count++
+    cntEl.innerText = word
+
+    //create
+    const li = document.createElement('li')
+    li.setAttribute('data-counter',count)
+    
+    li.innerHTML = '<b> Word </b>' + count
+	utterance.text = word
+    speechSynthesis.speak(utterance);
+	
+    //append
+    ulEl.appendChild(li)
+}
 incB.addEventListener('click',incF)
 decB.addEventListener('click',decF)
+saveButton.addEventListener('click',saveText)
+dictateButton.addEventListener('click', dictateNext)
