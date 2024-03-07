@@ -14,6 +14,7 @@ const utterance = new SpeechSynthesisUtterance()
 function saveText() {
 	
 	let textInput = textEl.value
+	textInput = textInput.replaceAll(' ', '\n')
 	words = textInput.split( "\n" )	
 	textEl.value = ""
 	console.log(words)
