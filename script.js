@@ -14,16 +14,21 @@ evalEl.disabled = true
 
 const ulEl = document.getElementById('listItems')
 const textEl = document.getElementById('text')
+const headEl = document.getElementById('headings')
 
 let count = 0
+let practiceTest = 1
+let wordsToDictateLength = 0
 let start = false
 
 let words = []
+let retestwords = []
+
 const utterance = new SpeechSynthesisUtterance()
 
 function shuffle(words) {
 	
-	let length = words.length - 1
+	let length = wordsToDictateLength - 1
 	while (length > 0) {
 		let index = Math.floor(Math.random() * (length + 1))
 		if (index != length) {
@@ -56,31 +61,37 @@ function saveText() {
 	}
 	let temp = ""
 	
+	wordsToDictateLength = words.length
 	shuffle(words)
 }
 
-function dictateNext() {
+
+function dictateNextInternal(wordsTodictate) {
 	
 	if (dictateButtonEl.disabled) {
 		console.log("Disabled")
 		return
 	}
 	dictateButtonEl.disabled = true	
-	if (words.length == 1 && words[0] == "") {
+	if (wordsToDictateLength == 1 && wordsTodictate[0] == "") {
 		console.log("write words in text box and press save")
 		utterance.text = "Write words in text box and press save. Then press dictate"
 		speechSynthesis.speak(utterance)
 		return
 	}
-	if (words.length == count) {
+	if (wordsToDictateLength == count) {
 		console.log("disable start dictation")
 		utterance.text = "Done with dictation. Press Check Dictation to check"
 		speechSynthesis.speak(utterance)
 		checkButtonEl.disabled = false
+		practiceTest++
 		return
 	}
+	if (count == 0) {
+		headEl.innerText = "Practice Dictation:" + practiceTest
+	}
 	
-	let word = words[count]
+	let word = wordsTodictate[count]
 	count++
     
     //create
@@ -99,17 +110,20 @@ function dictateNext() {
 	dictateButtonEl.disabled = false
 }
 
+function dictateNext() {
+	dictateNextInternal(words)
+}
 function checkNext() {
 	
 	console.log(start)
-	if (start && (count == words.length)) {
+	if (start && (count == wordsToDictateLength)) {
 		console.log("Done check Dictation")
 		utterance.text = "Done with check dictation"
 		speechSynthesis.speak(utterance)
 		checkButtonEl.disabled = true
 		evalEl.disabled = false
 		return
-	}else if (!start && (words.length == count)) {
+	}else if (!start && (wordsToDictateLength == count)) {
 		count = 0
 		start = true
 	} 
@@ -126,17 +140,71 @@ function checkNext() {
 }
 
 function evaluate() {
-	let length = words.length
-	let correct = 0
+	let length = wordsToDictateLength
+	let incorrect = 0
+	let i = 1
+	evalEl.disabled = true
 	for (i = 1; i <= length; i++) {
 		let id = "checkbox" + i
 		const checkBox = document.getElementById(id)
-		if (checkBox.checked) {
-			correct++;
+		checkBox.disabled = true
+		if (!checkBox.checked) {				
+			//retestwords[incorrect++] = words[i - 1]
+			incorrect++
 		}
+		checkBox.disabled = true
 	}
-	utterance.text = "You got " + correct + "out of " + length
+	
+	utterance.text = "You got " + (length - incorrect) + "out of " + length
 	speechSynthesis.speak(utterance)
+	
+	if (incorrect == 0) {
+		utterance.text = "Congratulations, no more practice test"
+		speechSynthesis.speak(utterance)
+		return
+	}
+	
+	// adjust Array
+	wordsToDictateLength = incorrect
+	let indexCorrect = incorrect + 1
+	i = 1
+	
+	while (incorrect && indexCorrect <= wordsToDictateLength) {
+		let id = "checkbox" + i
+	
+		const checkBox = document.getElementById(id)
+		
+		if (!checkBox.checked) {
+			incorrect--
+		} else {
+			if (i  < indexCorrect) {
+				let id1 = "checkbox" + indexCorrect
+				let checkBox1 = document.getElementById(id1)
+				console.log(indexCorrect)
+				while (checkBox1.checked) {					
+					indexCorrect++
+					id1 = "checkbox" + indexCorrect
+					checkBox1 = document.getElementById(id1)
+					console.log(indexCorrect)
+				}
+				let temp = words[i - 1]
+				words[i - 1] = words[indexCorrect -1]
+				words[indexCorrect -1] = temp
+				indexCorrect++
+			}
+		}		
+		i++
+	}
+	for (i = 1; i <= length; i++) {
+		const li = ulEl.querySelector('[data-counter="'+i+'"]')		
+		li.remove()
+	}
+	
+	shuffle(words)
+	count = 0
+	start = false
+	dictateButtonEl.disabled = false
+		
 }
 
 saveButton.addEventListener('click',saveText)
