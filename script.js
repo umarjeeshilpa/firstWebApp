@@ -1,9 +1,11 @@
-
+console.log("Version 0.001")
 const saveButton = document.querySelector('#save')
 const saveEl = document.getElementById('save')
+
 const dictateButton = document.querySelector('#dictate')
 const dictateButtonEl = document.getElementById('dictate')
 dictateButtonEl.disabled = true
+
 const checkButton = document.querySelector('#check')
 const checkButtonEl = document.getElementById('check')
 checkButtonEl.disabled = true
@@ -25,6 +27,20 @@ let words = []
 
 const utterance = new SpeechSynthesisUtterance()
 
+let localWords = localStorage.getItem("words")
+let localLen = localStorage.getItem("length")
+
+if (localLen != null) {
+	wordsToDictateLength = parseInt(localLen)
+
+	if (wordsToDictateLength != NaN) {
+		words = localWords.replaceAll(',', ' ')
+		console.log("wordsToDictateLength:" + wordsToDictateLength + " words:" + words)
+		textEl.value = words
+	}
+}
+
+
 function shuffle(words) {
 	
 	let length = wordsToDictateLength - 1
@@ -37,7 +53,9 @@ function shuffle(words) {
 		}
 		length--
 	}
+
 }
+
 function saveText() {
 	
 	let textInput = textEl.value
@@ -58,9 +76,10 @@ function saveText() {
 		saveEl.disabled = true
 		dictateButtonEl.disabled = false
 	}
-	let temp = ""
-	
+		
 	wordsToDictateLength = words.length
+	localStorage.setItem("words", words)
+	localStorage.setItem("length", wordsToDictateLength)
 	shuffle(words)
 }
 
@@ -111,6 +130,7 @@ function dictateNextInternal(wordsTodictate) {
 function dictateNext() {
 	dictateNextInternal(words)
 }
+
 function checkNext() {
 	checkButtonEl.disabled = true
 	console.log(start)
