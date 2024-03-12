@@ -26,6 +26,8 @@ let start = false
 let words = []
 
 const utterance = new SpeechSynthesisUtterance()
+const voices = speechSynthesis.getVoices()
+console.log(voices)
 
 let localWords = localStorage.getItem("words")
 let localLen = localStorage.getItem("length")
