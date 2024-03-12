@@ -22,6 +22,7 @@ let count = 0
 let practiceTest = 1
 let wordsToDictateLength = 0
 let start = false
+let voiceIndex = 0
 
 let words = []
 
@@ -29,7 +30,8 @@ const utterance = new SpeechSynthesisUtterance()
 const voices = speechSynthesis.getVoices()
 console.log(voices)
 if (voices.length > 0) {
-	utterance.voice = voices[Math.floor(Math.random() * (voices.length))]
+	voiceIndex = voices[Math.floor(Math.random() * (voices.length))]
+	utterance.voice = voices[voiceIndex]
 }
 let localWords = localStorage.getItem("words")
 let localLen = localStorage.getItem("length")
@@ -110,7 +112,7 @@ function dictateNextInternal(wordsTodictate) {
 		return
 	}
 	if (count == 0) {
-		headEl.innerText = "Practice Dictation:" + practiceTest + " voice option:" + voices.length
+		headEl.innerText = "Practice Dictation:" + practiceTest + " voice option:" + voiceIndex + " " + utterance.voice
 	}
 	
 	let word = wordsTodictate[count]
