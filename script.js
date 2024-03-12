@@ -28,7 +28,9 @@ let words = []
 const utterance = new SpeechSynthesisUtterance()
 const voices = speechSynthesis.getVoices()
 console.log(voices)
-utterance.voice = voices[Math.floor(Math.random() * (voices.length))]
+if (voices.length > 0) {
+	utterance.voice = voices[Math.floor(Math.random() * (voices.length))]
+}
 let localWords = localStorage.getItem("words")
 let localLen = localStorage.getItem("length")
 
