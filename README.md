@@ -14,5 +14,6 @@ An application helpful for parents or students to get spellings dictation practi
 2. Better Practice test adding few correct words
 3. Export/Import capability
    
-## Resources
-https://github.com/Mikulew/js-text-to-speech/
+## References
+Basic text to Speech https://github.com/Mikulew/js-text-to-speech/
+Speech related challenges https://github.com/jankapunkt/easy-speech?tab=readme-ov-file
