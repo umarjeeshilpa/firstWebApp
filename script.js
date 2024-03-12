@@ -108,7 +108,7 @@ function dictateNextInternal(wordsTodictate) {
 		return
 	}
 	if (count == 0) {
-		headEl.innerText = "Practice Dictation:" + practiceTest
+		headEl.innerText = "Practice Dictation:" + practiceTest + " voice option:" + voices.length
 	}
 	
 	let word = wordsTodictate[count]
