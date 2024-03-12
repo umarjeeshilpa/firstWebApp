@@ -120,6 +120,9 @@ function dictateNextInternal(wordsTodictate) {
 	}
 	if (count == 0) {
 		headEl.innerText = "Practice Dictation:" + practiceTest + " voice option:" + voices.length
+		if (voiceIndex > -1) {
+			headEl.innerText += " voice used:" + utterance.voice.name
+		}
 	}
 	
 	let word = wordsTodictate[count]
