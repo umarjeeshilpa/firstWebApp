@@ -22,7 +22,6 @@ let wordsToDictateLength = 0
 let start = false
 
 let words = []
-let retestwords = []
 
 const utterance = new SpeechSynthesisUtterance()
 
@@ -148,8 +147,7 @@ function evaluate() {
 		let id = "checkbox" + i
 		const checkBox = document.getElementById(id)
 		checkBox.disabled = true
-		if (!checkBox.checked) {				
-			//retestwords[incorrect++] = words[i - 1]
+		if (!checkBox.checked) {						
 			incorrect++
 		}
 		checkBox.disabled = true
