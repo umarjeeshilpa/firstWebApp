@@ -28,17 +28,21 @@ let words = []
 const utterance = new SpeechSynthesisUtterance()
 const voices = speechSynthesis.getVoices()
 console.log(voices)
-let voiceInfo = ""
+let voiceIndex = -1
 for (let j = 0; j < voices.length; j++) {
-	voiceInfo += voices[j].name + " " + voices[j].lang + " "
+	if ( voices[j].lang == "en-IN") {
+		voiceIndex = j
+		break;
+	}
 }
-textEl.value = voiceInfo
+
+if (voiceIndex > -1) {
+	utterance.voice = voices[voiceIndex]
+}
 
 let localWords = localStorage.getItem("words")
 let localLen = localStorage.getItem("length")
-if (voices.length > 0) {
-	localLen = null
-}
+
 if (localLen != null) {
 	wordsToDictateLength = parseInt(localLen)
 
