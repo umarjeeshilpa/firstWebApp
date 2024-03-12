@@ -102,22 +102,21 @@ function dictateNextInternal(wordsTodictate) {
 	//append
     ulEl.appendChild(li)
     speechSynthesis.speak(utterance)
-	//TODO timer based can be done event based
-	//setTimeout(() => {  speechSynthesis.speak(utterance); }, 5000);
-	//setTimeout(() => {  speechSynthesis.speak(utterance); }, 10000);
-	//setTimeout(() => {dictateButtonEl.disabled = false;}, 10100);
-	dictateButtonEl.disabled = false
+    //TODO timer based can be done event based
+    setTimeout(() => {  speechSynthesis.speak(utterance); }, 5000);
+    setTimeout(() => {  speechSynthesis.speak(utterance); }, 10000);
+    setTimeout(() => {dictateButtonEl.disabled = false;}, 10100);    
 }
 
 function dictateNext() {
 	dictateNextInternal(words)
 }
 function checkNext() {
-	
+	checkButtonEl.disabled = true
 	console.log(start)
 	if (start && (count == wordsToDictateLength)) {
 		console.log("Done check Dictation")
-		utterance.text = "Done with check dictation"
+		utterance.text = "Done with check dictation. Mark correct words and then press Evaluate"
 		speechSynthesis.speak(utterance)
 		checkButtonEl.disabled = true
 		evalEl.disabled = false
@@ -134,7 +133,8 @@ function checkNext() {
 	const li = ulEl.querySelector('[data-counter="'+count+'"]')
 	li.innerHTML = '<label><input id="checkbox'+ count + '" type="checkbox"><b> Word </b>' + count + ' ' + word + '</label>'
 	utterance.text = word
-    speechSynthesis.speak(utterance)
+    	speechSynthesis.speak(utterance)
+	setTimeout(() => {checkButtonEl.disabled = false;}, 2000);
 		
 }
 
