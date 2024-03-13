@@ -1,4 +1,10 @@
 console.log("Version 0.001")
+// Speech related challenges https://github.com/jankapunkt/easy-speech?tab=readme-ov-file
+
+const clearButton = document.querySelector('#clearHistory')
+const clearEl = document.getElementById('clearHistory')
+clearEl.disabled = true
+
 const saveButton = document.querySelector('#save')
 const saveEl = document.getElementById('save')
 
@@ -50,6 +56,7 @@ if (localLen != null) {
 		words = localWords.replaceAll(',', ' ')
 		console.log("wordsToDictateLength:" + wordsToDictateLength + " words:" + words)
 		textEl.value = words
+		clearEl.disabled = false
 	}
 }
 
@@ -108,6 +115,7 @@ function dictateNextInternal(wordsTodictate) {
 		console.log("write words in text box and press save")
 		utterance.text = "Write words in text box and press save. Then press dictate"
 		speechSynthesis.speak(utterance)
+		saveEl.disabled = false	
 		return
 	}
 	if (wordsToDictateLength == count) {
@@ -120,9 +128,6 @@ function dictateNextInternal(wordsTodictate) {
 	}
 	if (count == 0) {
 		headEl.innerText = "Practice Dictation:" + practiceTest + " voice option:" + voices.length
-		if (voiceIndex > -1) {
-			headEl.innerText += " voice used:" + utterance.voice.name
-		}
 	}
 	
 	let word = wordsTodictate[count]
@@ -241,6 +246,13 @@ function evaluate() {
 		
 }
 
+function clearHistory() {
+	localStorage.clear()
+	textEl.value = ''
+	clearEl.disabled = true
+}
+
+clearButton.addEventListener('click', clearHistory)
 saveButton.addEventListener('click',saveText)
 dictateButton.addEventListener('click', dictateNext)
 checkButton.addEventListener('click', checkNext)
