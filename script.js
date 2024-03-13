@@ -144,8 +144,8 @@ function dictateNextInternal(wordsTodictate) {
     speechSynthesis.speak(utterance)
     //TODO timer based can be done event based
     setTimeout(() => {  speechSynthesis.speak(utterance); }, 5000);
-    setTimeout(() => {  speechSynthesis.speak(utterance); }, 10000);
-    setTimeout(() => {dictateButtonEl.disabled = false;}, 10100);    
+    setTimeout(() => {  speechSynthesis.speak(utterance); }, 10000);	
+    setTimeout(() => { dictateButtonEl.disabled = false;dictateNextInternal(wordsTodictate);}, 10100); 
 }
 
 function dictateNext() {
