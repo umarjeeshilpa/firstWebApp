@@ -1,12 +1,49 @@
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
-        Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    line-height: 1.6;
-    font-size: 18px;
+h1 {
+	background: violet;
+}
+.steps {
+	background: skyblue
+}
+.config {
+    background: lightgreen;
+	padding: 18px;
+}
+.practice {
+    background: orange;
+	padding: 18px;
+}
+.collapsible {
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+.collapsible:after {
+  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  font-size: 13px;
+  color: white;
+  float: right;
+  margin-left: 5px;
+}
+.active:after {
+  content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+.active, .collapsible:hover {
+  background-color: #555;
 }
 
-.yellow {
-    background: yellow
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: skyblue;
 }
-.red {
-    background: red
+.errormsg {
+	color: red;
 }
