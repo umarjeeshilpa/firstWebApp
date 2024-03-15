@@ -1,9 +1,19 @@
 console.log("Version 0.001")
-// Speech related challenges https://github.com/jankapunkt/easy-speech?tab=readme-ov-file
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", collapsible);
+}
 
 const clearButton = document.querySelector('#clearHistory')
 const clearEl = document.getElementById('clearHistory')
 clearEl.disabled = true
+
+const clearItemButton = document.querySelector('#clearItem')
+const clearItemEl = document.getElementById('clearItem')
+clearItemEl.disabled = true
 
 const saveButton = document.querySelector('#save')
 const saveEl = document.getElementById('save')
@@ -23,11 +33,16 @@ evalEl.disabled = true
 const ulEl = document.getElementById('listItems')
 const textEl = document.getElementById('text')
 const headEl = document.getElementById('headings')
+const errMsg1 = document.getElementById('errormsg1')
+
+const dropdown = document.getElementById('arrayDropdown');
 
 let count = 0
 let practiceTest = 1
 let wordsToDictateLength = 0
 let start = false
+
+let arr = []
 
 let words = []
 
@@ -46,20 +61,67 @@ if (voiceIndex > -1) {
 	utterance.voice = voices[voiceIndex]
 }
 
-let localWords = localStorage.getItem("words")
-let localLen = localStorage.getItem("length")
+createDropDown()
 
-if (localLen != null) {
-	wordsToDictateLength = parseInt(localLen)
-
-	if (wordsToDictateLength != NaN) {
-		words = localWords.replaceAll(',', ' ')
-		console.log("wordsToDictateLength:" + wordsToDictateLength + " words:" + words)
-		textEl.value = words
-		clearEl.disabled = false
-	}
+if (arr.length > 0) {
+	clearEl.disabled = false
 }
 
+function collapsible() {
+   this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    } 
+}
+
+
+function createDropDown() {
+	var options="";
+	arr = []
+	arr.push("--Please choose an option--")
+	for (let i = 0; i < localStorage.length; i++) {
+		if (localStorage.key(i) != "length") {
+			arr.push(localStorage.key(i))			
+		}
+	}
+	arr.sort()
+	console.log(arr)
+	arr.map((op,i)=>{
+         options+=`<option value="${op}" id="${i}" style="border-radius: 5px;"">${op}</option>`
+    })
+    document.getElementById("arrayDropdown").innerHTML=options;
+}
+
+function selectOption() {
+	// get the index of the selected option
+    let selectedIndex = dropdown.selectedIndex;
+    // get a selected option and text value using the text property
+    let selectedValue = dropdown.options[selectedIndex].text;
+	console.log(selectedValue)
+	let localWords = localStorage.getItem(selectedValue)
+	if (localWords == null) {
+		words = []
+		wordsToDictateLength = 0
+		dictateButtonEl.disabled = true
+		return
+	}
+	console.log(localWords)
+	words = localWords.split(',')	
+	wordsToDictateLength = words.length
+	shuffle(words)
+	
+	dictateButtonEl.disabled = false
+	clearItemEl.disabled = false
+	
+	count = 0
+	start = false
+	ulEl.innerHTML = ''
+	headEl.innerText = ''
+	
+}
 
 function shuffle(words) {
 	
@@ -73,34 +135,40 @@ function shuffle(words) {
 		}
 		length--
 	}
-
 }
 
 function saveText() {
 	
 	let textInput = textEl.value
-	textInput = textInput.replaceAll(' ', '\n')
-	words = textInput.split( "\n" )	
-	textEl.value = ""
-	console.log(words)
-	console.log(words.length)
-	count = 0
-	start = false
-	
-	// randomize
-	
-	let length = words.length - 1
-	if (words.length === 0) {
-		length = 0
-	} else {
-		saveEl.disabled = true
-		dictateButtonEl.disabled = false
+	if (textInput == '') {
+		errMsg1.innerText="Please enter dictation words"
+		return
 	}
 		
-	wordsToDictateLength = words.length
-	localStorage.setItem("words", words)
+	const dictationKey = document.getElementById('keyword')
+	console.log(dictationKey.value)
+	let regex = /^[a-z0-9]+$/i
+	if (regex.test(dictationKey.value)) {
+		console.log("PASS")
+	} else {
+		errMsg1.innerText="Please enter dictation name using only alpha numeric characters"		
+		return		
+	}
+	textInput = textInput.trim()
+	textInput = textInput.replaceAll(' ', '\n')
+	words = textInput.split( "\n" )		
+	console.log(words)
+	console.log(words.length)
+
+	
+	localStorage.setItem(dictationKey.value, words)
 	localStorage.setItem("length", wordsToDictateLength)
-	shuffle(words)
+	
+	dictationKey.value = ""
+	errMsg1.innerText=""
+	textEl.value = ""
+	
+	createDropDown()	
 }
 
 
@@ -127,7 +195,11 @@ function dictateNextInternal(wordsTodictate) {
 		return
 	}
 	if (count == 0) {
-		headEl.innerText = "Practice Dictation:" + practiceTest + " voice option:" + voices.length
+		headEl.innerText = "Practice Dictation:" + practiceTest
+		dropdown.disabled = true
+		clearEl.disabled = true
+		clearItemEl.disabled = true
+		saveEl.disabled = true		
 	}
 	
 	let word = wordsTodictate[count]
@@ -172,11 +244,10 @@ function checkNext() {
     
     //create
 	const li = ulEl.querySelector('[data-counter="'+count+'"]')
-	li.innerHTML = '<label><input id="checkbox'+ count + '" type="checkbox"><b> Word </b>' + count + ' ' + word + '</label>'
+	li.innerHTML = '<label><input id="checkbox'+ count + '" type="checkbox">Word ' + count + ' <b>' + word + '</b></label>'
 	utterance.text = word
-    	speechSynthesis.speak(utterance)
-	setTimeout(() => {checkButtonEl.disabled = false;}, 2000);
-		
+    speechSynthesis.speak(utterance)
+	setTimeout(() => {checkButtonEl.disabled = false;}, 2000);		
 }
 
 function evaluate() {
@@ -190,8 +261,7 @@ function evaluate() {
 		checkBox.disabled = true
 		if (!checkBox.checked) {						
 			incorrect++
-		}
-		checkBox.disabled = true
+		}		
 	}
 	
 	utterance.text = "You got " + (length - incorrect) + "out of " + length
@@ -200,6 +270,13 @@ function evaluate() {
 	if (incorrect == 0) {
 		utterance.text = "Congratulations, no more practice test"
 		speechSynthesis.speak(utterance)
+		dropdown.disabled = false
+		clearEl.disabled = false
+		clearItemEl.disabled = false
+		saveEl.disabled = false
+		count = 0
+		start = false
+		console.log("enabled dropdown")
 		return
 	}
 	
@@ -238,21 +315,32 @@ function evaluate() {
 		const li = ulEl.querySelector('[data-counter="'+i+'"]')		
 		li.remove()
 	}
-	
 	shuffle(words)
 	count = 0
 	start = false
-	dictateButtonEl.disabled = false
-		
+	dictateButtonEl.disabled = false		
 }
 
 function clearHistory() {
+	dictateButtonEl.disabled = true
 	localStorage.clear()
 	textEl.value = ''
 	clearEl.disabled = true
+	createDropDown()
+}
+
+function clearItem() {
+	dictateButtonEl.disabled = true
+	// get the index of the selected option
+    let selectedIndex = dropdown.selectedIndex;
+    // get a selected option and text value using the text property
+    let selectedValue = dropdown.options[selectedIndex].text;
+	localStorage.removeItem(selectedValue)
+	createDropDown()	
 }
 
 clearButton.addEventListener('click', clearHistory)
+clearItemButton.addEventListener('click', clearItem)
 saveButton.addEventListener('click',saveText)
 dictateButton.addEventListener('click', dictateNext)
 checkButton.addEventListener('click', checkNext)
