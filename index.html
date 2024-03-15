@@ -8,26 +8,62 @@
     </head>
     <body>
 		<h1> Spelling Dictation Practice</h1>
-		<span> Steps: </span>
+		<button class="collapsible">Create Dictation Tests</button>
+		<div class="content">
 		<ul>
-		<li> Add all words to text box to be used for spelling dictation. Words should be space or newline separated and click save. It will clear the text box and cache the words</li>
-		<li> click dictate which will randomly say the words, each on three times. till all words are said. You can write spelling on paper</li>
-		<li> Once done with dictation, click check to check the words, spellings will appear on screen</li>
+		<li> Provide a name for dictation.Use alphanumeric characters to form the name</li>
+		<li> Add all words to text box to be used for spelling dictation. </li>
+		<li> Words should be space or newline separated and click save.</li>
+		<li> It will clear the text box and cache the words by name </li>
+		<li> The Name(s) will be available in drop down under Practice Dictation using tests </li>
+		</ul>
+		<div class="config">
+		<p class="errormsg" id="errormsg1"></p>
+		<label>Dictation Name: <input id="keyword" type="text"> </label>
+		<br>
+		<br>
+		<span> Dictation Words: </span> 
+		<textarea id="text"></textarea>
+		<br>
+		<br>
+		<button id="save">Save</button>
+		<br>
+		<br>		
+		</div>
+		<br>
+		</div>
+		<br>
+		<button class="collapsible">Practice Dictation using tests</button>
+		<div class="content">		
+		<ul>
+		<li> Select dictation from drop down by name </li>
+		<li> Click dictate which will randomly say the words, each on three times. till all words are said. You can write spelling on paper</li>
+		<li> Once done with dictation,click check to check the words, spellings will appear on screen</li>
 		<li> Tick the check boxes for which you got correct spelling and then press evaluate </li>
 		<li> If you have incorrect words, dictate will be enabled for next practice test using incorrect words and you can repeat till you get all words correct </li>
-		
-		
 		</ul>
-		<textarea id="text"></textarea>
-		<button id="clearHistory">ClearHistory</button>
-		<button id="save">Save</button>
+		</ul>
+		
+		<div class="practice">
+		<br>
+		<span><b>Dictation Practice For: </b></span>
+		<select id="arrayDropdown"  onchange = "selectOption()">
+		</select>
+		<button id="clearItem">ClearSelected</button>
+		<button id="clearHistory">ClearAll</button>
+		<br>
+		<br>
 		<button id="dictate">Dictatate</button>
 		<button id="check">Check</button>
 		<button id="evaluate">Evaluate</button>
+		
 		<h2 id="headings"></h2>
 		<ul id="listItems">
-        </ul>        
-
+        </ul>
+		<br>
+		</div>
+		<br>
+		</div>
 		<script src="script.js"></script>
     </body>
 </html>
