@@ -99,7 +99,7 @@ if (testNameList.length > 0) {
 
 // Function called on click for collapsible
 function collapsible() {
-   this.classList.toggle("active");
+    this.classList.toggle("active");
     var content = this.nextElementSibling;
     if (content.style.maxHeight){
       content.style.maxHeight = null;
