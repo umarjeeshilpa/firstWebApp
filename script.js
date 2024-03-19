@@ -1,55 +1,84 @@
+// Keep track of deployed changes, increment
 console.log("Version 0.001")
 
+// collapsible event listener
 var coll = document.getElementsByClassName("collapsible");
 var i;
-
 for (i = 0; i < coll.length; i++) {
   coll[i].addEventListener("click", collapsible);
 }
 
+// global buttons and elements
+
+// Button to save a test, once saved it appears in dropdown for tests
+// under Practice Dictation using tests
+const saveButton = document.querySelector('#save')
+const saveEl = document.getElementById('save')
+
+//Element to display error message for save option
+const errMsg1 = document.getElementById('errormsg1')
+
+// text area to add words for test
+const textEl = document.getElementById('text')
+
+// Button to clear all cached tests
 const clearButton = document.querySelector('#clearHistory')
 const clearEl = document.getElementById('clearHistory')
 clearEl.disabled = true
 
+// Button to clear selected cached test
 const clearItemButton = document.querySelector('#clearItem')
 const clearItemEl = document.getElementById('clearItem')
 clearItemEl.disabled = true
 
-const saveButton = document.querySelector('#save')
-const saveEl = document.getElementById('save')
+// Dropdown of tests to be selected from cached or saved tests
+const dropdown = document.getElementById('arrayDropdown');
 
+// Button to dictate the selected test, enabled on selecting a test
 const dictateButton = document.querySelector('#dictate')
 const dictateButtonEl = document.getElementById('dictate')
 dictateButtonEl.disabled = true
 
+// Button to check the words, on each click displays spellings of the words in same order
+// as given during dictate for this test
 const checkButton = document.querySelector('#check')
 const checkButtonEl = document.getElementById('check')
 checkButtonEl.disabled = true
 
+// Button to evaluate as per marked check box to decide whether to give another practice test
+// for incorrect words or done with practice tests
 const evalButton = document.querySelector('#evaluate')
 const evalEl = document.getElementById('evaluate')
 evalEl.disabled = true
 
-const ulEl = document.getElementById('listItems')
-const textEl = document.getElementById('text')
+
+// Headings about practice test number
 const headEl = document.getElementById('headings')
-const errMsg1 = document.getElementById('errormsg1')
+// element list used to list the words during dictation and words with checkbox during check and evaluate
+const ulEl = document.getElementById('listItems')
 
-const dropdown = document.getElementById('arrayDropdown');
-
+// Initializations
+// Keep counter for words
 let count = 0
+// keep count for practice test
 let practiceTest = 1
+// Length of words to dictate during test
 let wordsToDictateLength = 0
+// Indicator about whether dictation test started
 let start = false
 
-let arr = []
+// array of cached tests
+let testNameList = []
 
+// Array of words of a test
 let words = []
 
+// Initialization for text to speech
 const utterance = new SpeechSynthesisUtterance()
 const voices = speechSynthesis.getVoices()
 console.log(voices)
 let voiceIndex = -1
+// Use en-IN voice if available, else default
 for (let j = 0; j < voices.length; j++) {
 	if ( voices[j].lang == "en-IN") {
 		voiceIndex = j
@@ -63,7 +92,7 @@ if (voiceIndex > -1) {
 
 createDropDown()
 
-if (arr.length > 0) {
+if (testNameList.length > 0) {
 	clearEl.disabled = false
 }
 
@@ -80,16 +109,16 @@ function collapsible() {
 
 function createDropDown() {
 	var options="";
-	arr = []
-	arr.push("--Please choose an option--")
+	testNameList = []
+	testNameList.push("--Please choose an option--")
 	for (let i = 0; i < localStorage.length; i++) {
 		if (localStorage.key(i) != "length") {
-			arr.push(localStorage.key(i))			
+			testNameList.push(localStorage.key(i))			
 		}
 	}
-	arr.sort()
-	console.log(arr)
-	arr.map((op,i)=>{
+	testNameList.sort()
+	console.log(testNameList)
+	testNameList.map((op,i)=>{
          options+=`<option value="${op}" id="${i}" style="border-radius: 5px;"">${op}</option>`
     })
     document.getElementById("arrayDropdown").innerHTML=options;
@@ -118,6 +147,7 @@ function selectOption() {
 	
 	count = 0
 	start = false
+	practiceTest = 1
 	ulEl.innerHTML = ''
 	headEl.innerText = ''
 	
@@ -138,15 +168,16 @@ function shuffle(words) {
 }
 
 function saveText() {
-	
 	let textInput = textEl.value
 	if (textInput == '') {
 		errMsg1.innerText="Please enter dictation words"
 		return
 	}
-		
+	// text input for test name	
 	const dictationKey = document.getElementById('keyword')
 	console.log(dictationKey.value)
+	
+	// Validation for test name
 	let regex = /^[a-z0-9]+$/i
 	if (regex.test(dictationKey.value)) {
 		console.log("PASS")
@@ -154,6 +185,7 @@ function saveText() {
 		errMsg1.innerText="Please enter dictation name using only alpha numeric characters"		
 		return		
 	}
+	
 	textInput = textInput.trim()
 	textInput = textInput.replaceAll(' ', '\n')
 	words = textInput.split( "\n" )		
