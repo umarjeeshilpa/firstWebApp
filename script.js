@@ -85,17 +85,19 @@ for (let j = 0; j < voices.length; j++) {
 		break;
 	}
 }
-
 if (voiceIndex > -1) {
 	utterance.voice = voices[voiceIndex]
 }
 
+// Initial Dropdown creation as per cached entries
 createDropDown()
 
+// enable clear all tests button if exists some tests
 if (testNameList.length > 0) {
 	clearEl.disabled = false
 }
 
+// Function called on click for collapsible
 function collapsible() {
    this.classList.toggle("active");
     var content = this.nextElementSibling;
@@ -106,7 +108,9 @@ function collapsible() {
     } 
 }
 
-
+// Function to fetch from localstorage tests
+// and last test length, not used corrently
+// It has --Please choose an option-- as first option
 function createDropDown() {
 	var options="";
 	testNameList = []
@@ -124,6 +128,8 @@ function createDropDown() {
     document.getElementById("arrayDropdown").innerHTML=options;
 }
 
+// Function called on change in dropdown selection
+// it initializes dictation and enables dictate button
 function selectOption() {
 	// get the index of the selected option
     let selectedIndex = dropdown.selectedIndex;
@@ -150,9 +156,11 @@ function selectOption() {
 	practiceTest = 1
 	ulEl.innerHTML = ''
 	headEl.innerText = ''
-	
 }
 
+// Function used to shuffle words array so that given words are randomized
+// while giving dictation
+// Uses global wordsToDictateLength
 function shuffle(words) {
 	
 	let length = wordsToDictateLength - 1
@@ -167,6 +175,9 @@ function shuffle(words) {
 	}
 }
 
+// Function used to same the dictation test by given name
+// and set of words
+// recreates the dropdown
 function saveText() {
 	let textInput = textEl.value
 	if (textInput == '') {
@@ -192,18 +203,22 @@ function saveText() {
 	console.log(words)
 	console.log(words.length)
 
-	
 	localStorage.setItem(dictationKey.value, words)
 	localStorage.setItem("length", wordsToDictateLength)
 	
 	dictationKey.value = ""
 	errMsg1.innerText=""
-	textEl.value = ""
-	
+	textEl.value = ""	
 	createDropDown()	
 }
 
-
+//dictation related internal function which dictates next word as per 
+// count
+// dictate each word three times with delay
+// disables dictation button once done dictating all words
+// Disables save, check and evaluate at start of dictation
+// Enables Check at end of dictation
+// Keep track of PracticeTest count
 function dictateNextInternal(wordsTodictate) {
 	
 	if (dictateButtonEl.disabled) {
@@ -252,10 +267,14 @@ function dictateNextInternal(wordsTodictate) {
     setTimeout(() => { dictateButtonEl.disabled = false;dictateNextInternal(wordsTodictate);}, 10100); 
 }
 
+// Function called on click of dictate, dictates list of words as per wordsTodictate
 function dictateNext() {
 	dictateNextInternal(words)
 }
 
+// Function called on click on Check, displays spellings for dictated words in the order
+// With a check box which then can be used to mark correct or incorrect words
+// enabled evaluate when done with all words of dictation shown in check
 function checkNext() {
 	checkButtonEl.disabled = true
 	console.log(start)
@@ -282,6 +301,9 @@ function checkNext() {
 	setTimeout(() => {checkButtonEl.disabled = false;}, 2000);		
 }
 
+//Function called on click of evaluate
+// Evaluates as per marked words and then enables dictate if there are incorrect words
+// if all words correct one can change the test and start new dictation
 function evaluate() {
 	let length = wordsToDictateLength
 	let incorrect = 0
@@ -353,6 +375,8 @@ function evaluate() {
 	dictateButtonEl.disabled = false		
 }
 
+// function called on click of clearAll button
+// Clear all localstorage or cached information
 function clearHistory() {
 	dictateButtonEl.disabled = true
 	localStorage.clear()
@@ -361,6 +385,8 @@ function clearHistory() {
 	createDropDown()
 }
 
+// function called on click of clearSelected button
+// Clear selected cached item
 function clearItem() {
 	dictateButtonEl.disabled = true
 	// get the index of the selected option
@@ -371,6 +397,7 @@ function clearItem() {
 	createDropDown()	
 }
 
+// Registering event listeners
 clearButton.addEventListener('click', clearHistory)
 clearItemButton.addEventListener('click', clearItem)
 saveButton.addEventListener('click',saveText)
